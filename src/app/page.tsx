@@ -1,5 +1,5 @@
 "use client";
 
 export default function Home() {
-  return <div>Hello World!!</div>;
+  return <div>Site A 메인 페이지</div>;
 }
