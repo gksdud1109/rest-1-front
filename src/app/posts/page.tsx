@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { PostDto } from "@/type/post";
+import { fetchApi } from "@/lib/client";
 
 export default function Home() {
 
@@ -11,9 +12,7 @@ export default function Home() {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   useEffect(() => {
-    fetch(`${baseUrl}/api/v1/posts`)
-      .then(res => res.json())
-      .then(data => {
+    fetchApi(`/api/v1/posts`).then(data => {
         setPosts(data);
       });
   },[]);
