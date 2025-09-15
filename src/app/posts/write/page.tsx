@@ -1,8 +1,10 @@
 "use client";
 
 import { fetchApi } from "@/lib/client";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   const handleSubmit = (e: any) => {
     e.preventDefault();
 
@@ -29,6 +31,7 @@ export default function Home() {
       }),
     }).then((data) => {
       alert(data.msg);
+      router.push(`/posts/${data.data.postDto.id}`);
     });
   };
 
