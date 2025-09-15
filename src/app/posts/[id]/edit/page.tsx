@@ -1,10 +1,19 @@
 "use client";
 
 import { fetchApi } from "@/lib/client";
-import { useRouter } from "next/navigation";
+import { PostDto } from "@/type/post";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const { id } = useParams();
   const router = useRouter();
+
+  const [post, setPost] = useState<PostDto | null>(null);
+
+  useEffect(() => {
+    fetchApi(`/api/v1/posts/${id}`).then(setPost);
+  }, []);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -19,54 +28,46 @@ export default function Home() {
       titleInput.focus();
     }
 
-    if (titleInput.value.length < 2) {
-      alert("제목은 2자 이상 입력해주세요.");
-      titleInput.focus();
-      return;
-    }
-
     if (contentText.value.length === 0) {
       alert("내용을 입력해주세요.");
       contentText.focus();
     }
 
-    if (contentText.value.length < 2) {
-      alert("내용은 2자 이상 입력해주세요.");
-      contentText.focus();
-      return;
-    }
-
-    fetchApi(`/api/v1/posts`, {
-      method: "POST",
+    fetchApi(`/api/v1/posts/${id}`, {
+      method: "PUT",
       body: JSON.stringify({
         title: titleInput.value,
         content: contentText.value,
       }),
     }).then((data) => {
       alert(data.msg);
-      router.replace(`/posts/${data.data.postDto.id}`);
+      router.replace(`/posts/${id}`);
     });
   };
 
+  if (post === null) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
-      <h1 className="text-center">새 글 작성</h1>
+      <h1 className="text-center">글 수정</h1>
       <form className="flex flex-col gap-2 p-2" onSubmit={handleSubmit}>
         <input
           className="border border-gray-300 rounded p-2"
           type="text"
           name="title"
           placeholder="제목"
-          maxLength={10}
+          defaultValue={post.title}
         />
         <textarea
           className="border border-gray-300 rounded p-2"
           name="content"
           placeholder="내용"
-          maxLength={100}
+          defaultValue={post.content}
         />
         <button className="bg-blue-500 text-white p-2 rounded" type="submit">
-          저장
+          수정
         </button>
       </form>
     </>
